@@ -2,11 +2,11 @@ name: React CI
 
 on: 
  push:
-  branch:
+  branches:
    - main
 
  pull_request:
-  branch:
+  branches:
    - main
 
 
@@ -17,7 +17,7 @@ jobs:
 
    steps:
      - name: Checkout repository
-     - uses: actions/checkout@v4
+       uses: actions/checkout@v4
 
      - name: Setup Node.js
        uses: actions/setup-node@v4
@@ -29,7 +29,7 @@ jobs:
        run: npm ci --legacy-peer-deps
 
      - name: Run eslint
-       run: npm run eslint
+       run: npm run lint
 
      - name: Run Test and Covarage
        run: npm test
