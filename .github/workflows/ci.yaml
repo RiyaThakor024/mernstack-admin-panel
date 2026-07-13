@@ -45,4 +45,20 @@ build-and-push-docker:
    env:
        IMAGE_NAME: riya024/mernspace-admin-panel
        IMAGE_TAG: build-${{ github.run_number }}
-                   
+
+       if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+
+       steps:
+            - name: Checkout repository
+              uses: actions/checkout@v4
+            - name: Log in to Docker Hub
+              uses: docker/login-action@v3
+              with:
+                  username: ${{ secrets.DOCKERHUB_USERNAME }}
+                  password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+            - name: Build Docker image
+              run: docker build -t ${IMAGE_NAME}:${IMAGE_TAG} --platform linux/amd64 -f docker/prod/Dockerfile .
+            - name: Push Docker image to Docker Hub
+              run: docker push ${IMAGE_NAME}:${IMAGE_TAG}
+                  
