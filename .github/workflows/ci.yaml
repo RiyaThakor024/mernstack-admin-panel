@@ -62,7 +62,7 @@ jobs:
           docker build \
             --platform linux/amd64 \
             -t ${IMAGE_NAME}:${IMAGE_TAG} \
-            -f docker/prod/Dockerfile .
+            -f docker/dev/Dockerfile .
 
       - name: Push Docker Image
         run: |
