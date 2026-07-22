@@ -1,23 +1,46 @@
 import { Layout, Card, Space,Form,Input,Checkbox,Button, Flex, Alert} from "antd";
 import { LockFilled ,UserOutlined,LockOutlined } from '@ant-design/icons';
 import { Logo } from "../../components/icons/Logo";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import type { Credentials } from "../../types";
-import { login } from "../../http/api";
+import { login,self } from "../../http/api";
+import { useEffect } from "react";
 
 const loginUser = async (credential: Credentials)=>{
   //server call logic
   const {data} = await login(credential);
   return data;
 }
+const getSelf = async()=>{
+  const {data} = await self();
+  return data;
+}
 export const LoginPage = () => {
+
+  const {data: selfData,refetch} = useQuery({
+    queryKey:['Self'],
+    queryFn:getSelf,
+    enabled:false,
+  });
+   
+   useEffect(() =>{
+    if(selfData){
+      console.log("UserData:",selfData);
+      
+    }
+   },[selfData]);
+   
   const {mutate,isPending,isError,error} = useMutation({
     mutationKey:['Login'],
     mutationFn:loginUser,
     onSuccess:async(data)=>{
+      
+      
       localStorage.setItem('accessToken',data.accessToken);
       localStorage.setItem('refreshToken',data.refreshToken);
-
+        const result = await refetch();
+      console.log('UserData:',result.data);
+       
       console.log("Login successful");
       
     }

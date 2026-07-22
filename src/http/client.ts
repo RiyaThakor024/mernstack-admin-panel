@@ -11,6 +11,18 @@ export const api = axios.create({
     }
 });
 
+// Attach the access token to every request
+api.interceptors.request.use((config) => {
+    const token = localStorage.getItem("accessToken");
+
+    if (token) {
+   config.headers.set("Authorization",`Bearer ${token}`);
+    };
+    
+    return config;
+});
+
+
 // log resolved baseURL for debugging in browser console
 try {
     console.info('API baseURL:', api.defaults.baseURL);
