@@ -1,6 +1,6 @@
 import {it , describe, expect} from 'vitest';
 import {render, screen} from '@testing-library/react'
-import { LoginPage } from './login';
+import { LoginPage } from '../../login';
 describe('Login Page',()=>{
     it('should render with required field',()=>{
            render(<LoginPage />)

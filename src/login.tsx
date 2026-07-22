@@ -1,10 +1,11 @@
 import { Layout, Card, Space,Form,Input,Checkbox,Button, Flex, Alert} from "antd";
 import { LockFilled ,UserOutlined,LockOutlined } from '@ant-design/icons';
-import { Logo } from "../../components/icons/Logo";
+import { Logo } from "./components/icons/Logo";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import type { Credentials } from "../../types";
-import { login,self } from "../../http/api";
+import type { Credentials } from "./types";
+import { login,self } from "./http/api";
 import { useEffect } from "react";
+import {useAuthStore} from '../store.ts';
 
 const loginUser = async (credential: Credentials)=>{
   //server call logic
@@ -16,6 +17,8 @@ const getSelf = async()=>{
   return data;
 }
 export const LoginPage = () => {
+
+   const {setUser} = useAuthStore();
 
   const {data: selfData,refetch} = useQuery({
     queryKey:['Self'],
@@ -29,7 +32,7 @@ export const LoginPage = () => {
       
     }
    },[selfData]);
-   
+
   const {mutate,isPending,isError,error} = useMutation({
     mutationKey:['Login'],
     mutationFn:loginUser,
@@ -39,7 +42,11 @@ export const LoginPage = () => {
       localStorage.setItem('accessToken',data.accessToken);
       localStorage.setItem('refreshToken',data.refreshToken);
         const result = await refetch();
+        if (result.data) {
+      setUser(result.data);
       console.log('UserData:',result.data);
+          
+        }
        
       console.log("Login successful");
       
