@@ -3,9 +3,10 @@ import { LockFilled ,UserOutlined,LockOutlined } from '@ant-design/icons';
 import { Logo } from "./components/icons/Logo";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import type { Credentials } from "./types";
-import { login,self } from "./http/api";
+import { login,self, logout } from "./http/api";
 import { useEffect } from "react";
 import {useAuthStore} from '../store.ts';
+import { usePermission } from "./hooks/usePermission.tsx";
 
 const loginUser = async (credential: Credentials)=>{
   //server call logic
@@ -17,8 +18,8 @@ const getSelf = async()=>{
   return data;
 }
 export const LoginPage = () => {
-
-   const {setUser} = useAuthStore();
+   const {isAllowed} = usePermission();
+   const {setUser,logout: logoutFromStore} = useAuthStore();
 
   const {data: selfData,refetch} = useQuery({
     queryKey:['Self'],
@@ -33,25 +34,40 @@ export const LoginPage = () => {
     }
    },[selfData]);
 
+   const {mutate: logoutMutate }=useMutation({
+    mutationKey:['Logout'],
+    mutationFn:logout,
+    onSuccess:async()=>{
+      logoutFromStore();
+      return;
+    }
+   });
+
   const {mutate,isPending,isError,error} = useMutation({
     mutationKey:['Login'],
     mutationFn:loginUser,
-    onSuccess:async(data)=>{
+    onSuccess:async()=>{
       
       
-      localStorage.setItem('accessToken',data.accessToken);
-      localStorage.setItem('refreshToken',data.refreshToken);
         const result = await refetch();
-        if (result.data) {
-      setUser(result.data);
-      console.log('UserData:',result.data);
+        //logout or redirect to client ui
+        //window.location.href = "http://clientui/url"
+        //"admin","manager","customer"
+        if(!isAllowed(result.data)){
+          logoutMutate(); 
           
         }
-       
-      console.log("Login successful");
-      
+      //   if(result.data.role === "customer"){
+      //      await logout(); 
+      //     logoutFromStore();
+    
+      //     return;
+      //   }
+      setUser(result.data);
+          
+        }      
     }
-  })
+  );
   return <>
   {/* <h1>Sign in</h1>
   <input type="text" placeholder="Username" />    
