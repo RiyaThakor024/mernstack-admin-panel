@@ -3,10 +3,10 @@ import { useAuthStore } from "../../store";
 
 export const Dashboard = () => {
 
-    //protection
-   const user = useAuthStore();
+    // protection
+   const user = useAuthStore((state) => state.user);
 
-   if(user === null){
+   if(!user){
     return <Navigate to="/auth/login" replace={true}/>;
 }
 

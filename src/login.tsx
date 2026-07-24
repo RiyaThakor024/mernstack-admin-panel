@@ -56,6 +56,7 @@ export const LoginPage = () => {
         if(!isAllowed(result.data)){
           logoutMutate(); 
           
+          
         }
       //   if(result.data.role === "customer"){
       //      await logout(); 

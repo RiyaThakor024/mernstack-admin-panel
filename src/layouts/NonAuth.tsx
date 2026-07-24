@@ -3,11 +3,11 @@ import { useAuthStore } from "../../store";
 
 export const NonAuth = () => {
  
-    //protection
-   const user = useAuthStore();
+    // protection
+   const user = useAuthStore((state) => state.user);
 
-   if(user !== null){
-    return <Navigate to="/" replace={true}/>;
+   if(user){
+    return <Navigate to="/" />;
 }
   return (
 <div>

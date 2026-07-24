@@ -4,10 +4,15 @@ import { LoginPage } from "./login";
 import { Dashboard } from "./layouts/Dashboard";
 import { NonAuth } from "./layouts/NonAuth";
 import { Catagories } from "../src/pages/Catagories";
+import { Root } from "./layouts/Root";
 
 export const router = createBrowserRouter([
 {
     path:'/',
+    element:<Root/>,
+    children:[
+        {
+    path:'',
     element:<Dashboard />,
     children:[
     {
@@ -31,5 +36,8 @@ export const router = createBrowserRouter([
     },
     
     ],
+}, 
+    ]
 },
+  
 ]);
